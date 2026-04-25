@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}Apply Leave - LeaveMS{% endblock %}
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0 fw-bold">
+                    <i class="bi bi-send me-2 text-primary"></i>Apply for Leave
+                </h5>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Leave Type</label>
+                        <select name="leave_type" class="form-select" required>
+                            <option value="">-- Select Leave Type --</option>
+                            <option value="Sick Leave">Sick Leave</option>
+                            <option value="Casual Leave">Casual Leave</option>
+                            <option value="Earned Leave">Earned Leave</option>
+                            <option value="Maternity Leave">Maternity Leave</option>
+                        </select>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">From Date</label>
+                            <input type="date" name="from_date" id="from_date" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">To Date</label>
+                            <input type="date" name="to_date" id="to_date" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3" id="days_info" style="display:none;">
+                        <div class="alert alert-info py-2 mb-0">
+                            <i class="bi bi-info-circle me-2"></i>
+                            <span id="days_text"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Reason</label>
+                        <textarea name="reason" class="form-control" rows="4"
+                                  placeholder="Briefly explain the reason for your leave..." required></textarea>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="bi bi-send me-2"></i>Submit Application
+                        </button>
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary px-4">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function calcDays() {
+        const from = document.getElementById('from_date').value;
+        const to = document.getElementById('to_date').value;
+        if (from && to) {
+            const d1 = new Date(from), d2 = new Date(to);
+            const diff = Math.floor((d2 - d1) / (1000 * 60 * 60 * 24)) + 1;
+            const info = document.getElementById('days_info');
+            const text = document.getElementById('days_text');
+            if (diff > 0) {
+                info.style.display = 'block';
+                text.textContent = `You are applying for ${diff} day(s) of leave.`;
+            } else {
+                info.style.display = 'none';
+            }
+        }
+    }
+    document.getElementById('from_date').addEventListener('change', calcDays);
+    document.getElementById('to_date').addEventListener('change', calcDays);
+
+    // Set min date to today
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('from_date').min = today;
+    document.getElementById('to_date').min = today;
+</script>
+{% endblock %}
